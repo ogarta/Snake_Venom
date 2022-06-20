@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,7 +29,22 @@ public class LibraryFragment extends Fragment {
         mMainActivity = (MainActivity) getActivity();
         addControls(view);
         setUpRecyclerView(mMainActivity);
+        checkData();
         return view;
+    }
+
+    private void checkData() {
+        Bundle bundle = getArguments();
+        if (bundle !=null){
+            DetailSnakeFragment snakeDetailFragment = new DetailSnakeFragment();
+            Bundle bundle1 = new Bundle();
+            bundle1.putSerializable("objectSnake",snakeModels.get(bundle.getInt("key")));
+            snakeDetailFragment.setArguments(bundle1);
+            getActivity().getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.frameLayout, snakeDetailFragment, "findThisFragment")
+                    .addToBackStack(null)
+                    .commit();
+        }
     }
 
     private void addControls(View view) {

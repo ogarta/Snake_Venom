@@ -10,9 +10,11 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.TextView;
 
 import com.etebarian.meowbottomnavigation.MeowBottomNavigation;
@@ -36,10 +38,33 @@ public class MainActivity extends AppCompatActivity {
         setUpNavi();
         events();
         checkPermissionCamera();
-
+        checkData();
     }
 
+    private void checkData() {
+        Intent intent = getIntent();
+        if(intent != null){
+            try {
+                Log.d("TAG", "checkData: " + Integer.parseInt(intent.getStringExtra("key")));
+                FragmentManager fragmentManager = getSupportFragmentManager();
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                LibraryFragment libraryFragment = new LibraryFragment();
+                naviBottom.show(ID_DATA,true);
+                Bundle bundle = new Bundle();
+                bundle.putInt("key", Integer.parseInt(intent.getStringExtra("key")) );
+                libraryFragment.setArguments(bundle);
+                fragmentTransaction.replace(R.id.frameLayout,libraryFragment);
+                fragmentTransaction.commit();
+            }catch (Exception e){
+                naviBottom.show(ID_HOME,true);
+                replaceFragment(new HomeFragment());
+            }
 
+        }else{
+            naviBottom.show(ID_HOME,true);
+            replaceFragment(new HomeFragment());
+        }
+    }
 
 
     private void checkPermissionCamera() {
@@ -51,6 +76,22 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void events() {
+        naviBottom.setOnReselectListener(new MeowBottomNavigation.ReselectListener() {
+            @Override
+            public void onReselectItem(MeowBottomNavigation.Model item) {
+                switch (item.getId()){
+                    case ID_HOME:
+                        replaceFragment(new HomeFragment());
+                        break;
+                    case ID_DATA:
+                        replaceFragment(new LibraryFragment());
+                        break;
+                    case ID_ABOUT:
+                        replaceFragment(new AboutFragment());
+                        break;
+                }
+            }
+        });
         naviBottom.setOnShowListener(new MeowBottomNavigation.ShowListener() {
             @Override
             public void onShowItem(MeowBottomNavigation.Model item) {
@@ -69,8 +110,6 @@ public class MainActivity extends AppCompatActivity {
                 txtLable.setText(name);
             }
         });
-        naviBottom.show(ID_HOME,true);
-        replaceFragment(new HomeFragment());
         naviBottom.setOnClickMenuListener(new MeowBottomNavigation.ClickListener() {
             @Override
             public void onClickItem(MeowBottomNavigation.Model item) {

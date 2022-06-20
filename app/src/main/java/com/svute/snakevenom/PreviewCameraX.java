@@ -130,7 +130,7 @@ public class PreviewCameraX extends AppCompatActivity implements ImageAnalysis.A
                         Intent intent = new Intent(PreviewCameraX.this,MainActivity.class);
                         startActivity(intent);
 
-//                        Toast.makeText(MainActivity.this, "Photo has been saved successfully.", Toast.LENGTH_SHORT).show();
+//                        Toast.makeText(   MainActivity.this, "Photo has been saved successfully.", Toast.LENGTH_SHORT).show();
                     }
 
                     @Override

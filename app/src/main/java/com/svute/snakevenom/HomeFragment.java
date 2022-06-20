@@ -16,7 +16,7 @@ import android.widget.Button;
 import java.util.List;
 
 public class HomeFragment extends Fragment {
-    Button btnImage, btnVideo, btnResult;
+    Button btnImage, btnVideo;
     CameraFragment cameraFragment = new CameraFragment();
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -36,12 +36,17 @@ public class HomeFragment extends Fragment {
                 replaceFragment(cameraFragment);
             }
         });
+        btnVideo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                replaceFragment(new RealtimeFragment());
+            }
+        });
     }
 
     private void addControls(View view) {
         btnImage = view.findViewById(R.id.buttonOpenImageFragment);
         btnVideo = view.findViewById(R.id.buttonOpenVideoFragment);
-        btnResult = view.findViewById(R.id.buttonOpenResultDialog);
     }
     private void replaceFragment(Fragment fragment){
         getActivity().getSupportFragmentManager().beginTransaction()

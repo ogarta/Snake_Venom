@@ -31,7 +31,7 @@
             android:id="@+id/buttonOpenVideoFragment"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Video"
+            android:text="RealTime"
             android:fontFamily="@font/nunito_sans_bold"
             android:textAllCaps="false"
             android:textColor="@color/white"
@@ -46,32 +46,18 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            app:layout_constraintGuide_percent="0.87" />
+            app:layout_constraintGuide_percent="1.0" />
 
         <FrameLayout
             android:id="@+id/frameLayout2"
             android:layout_width="match_parent"
             android:layout_height="0dp"
+            android:layout_marginTop="10dp"
             app:layout_constraintBottom_toBottomOf="@id/guideline"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/buttonOpenImageFragment" />
 
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/buttonOpenResultDialog"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:background="@drawable/theme_button"
-            android:fontFamily="@font/nunito_sans_semibold"
-            android:paddingHorizontal="10dp"
-            android:text="Xem Kết quả"
-            android:textAllCaps="false"
-            android:textColor="@color/white"
-            android:textSize="16sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.498"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/frameLayout2" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </FrameLayout>
