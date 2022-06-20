@@ -36,7 +36,11 @@ public class MainActivity extends AppCompatActivity {
         setUpNavi();
         events();
         checkPermissionCamera();
+
     }
+
+
+
 
     private void checkPermissionCamera() {
         if(ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.CAMERA)!= PackageManager.PERMISSION_GRANTED){
@@ -67,7 +71,6 @@ public class MainActivity extends AppCompatActivity {
         });
         naviBottom.show(ID_HOME,true);
         replaceFragment(new HomeFragment());
-
         naviBottom.setOnClickMenuListener(new MeowBottomNavigation.ClickListener() {
             @Override
             public void onClickItem(MeowBottomNavigation.Model item) {

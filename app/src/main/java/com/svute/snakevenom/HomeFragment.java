@@ -28,6 +28,7 @@ public class HomeFragment extends Fragment {
         return view;
     }
 
+
     private void addEvents() {
         btnImage.setOnClickListener(new View.OnClickListener() {
             @Override
