@@ -14,7 +14,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Nhận diện\nrắn độc hay không độc"
+        android:text="@string/label_dialog_show_result"
         android:layout_weight="1"
         android:textAlignment="center"
         android:paddingVertical="10dp"

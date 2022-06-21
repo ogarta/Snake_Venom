@@ -1,7 +1,13 @@
 <resources>
     <string name="app_name">Snake Venom</string>
+
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="btn_dialog_result_model_hi">Loại rắn</string>
+    <string name="btn_dialog_result_model">Độc/Không độc</string>
+    <string name="label_dialog_show_result">Nhận diện\nrắn độc hay không độc</string>
+    <String name="btn_dialog_result_model">Độc/Không độc</String>
+
     <string-array name="type">
         <item>Nhận diện rắn độc hay không độc</item>
         <item>Nhận diện loại rắn</item>

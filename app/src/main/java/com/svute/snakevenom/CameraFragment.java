@@ -49,6 +49,7 @@ public class CameraFragment extends Fragment {
     String mResultVenom = "";
     String mResultClass = "";
     String mIndexClass = "1";
+    int size = 200;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -280,7 +281,7 @@ public class CameraFragment extends Fragment {
     }
 
     private String xuLyPredic(Bitmap img, int type){
-        img = Bitmap.createScaledBitmap(img, 200, 200, true);
+        img = Bitmap.createScaledBitmap(img, size, size, true);
 
         if (type == 0){
             try {
@@ -289,15 +290,15 @@ public class CameraFragment extends Fragment {
                 // Creates inputs for reference.
                 TensorBuffer inputFeature0 = TensorBuffer.createFixedSize(new int[]{1, 200, 200, 3}, DataType.FLOAT32);
 
-                ByteBuffer byteBuffer = ByteBuffer.allocateDirect(4 * 200 * 200 * 3);
+                ByteBuffer byteBuffer = ByteBuffer.allocateDirect(4 * size * size * 3);
                 byteBuffer.order(ByteOrder.nativeOrder());
 
-                int[] intValues = new int[200 * 200];
+                int[] intValues = new int[size * size];
                 img.getPixels(intValues, 0, img.getWidth(), 0, 0, img.getWidth(), img.getHeight());
                 int pixel = 0;
                 //iterate over each pixel and extract R, G, and B values. Add those values individually to the byte buffer.
-                for(int i = 0; i < 200; i ++){
-                    for(int j = 0; j < 200; j++){
+                for(int i = 0; i < size; i ++){
+                    for(int j = 0; j < size; j++){
                         int val = intValues[pixel++]; // RGB
                         byteBuffer.putFloat(((val >> 16) & 0xFF) * (1.f / 255));
                         byteBuffer.putFloat(((val >> 8) & 0xFF) * (1.f / 255));
