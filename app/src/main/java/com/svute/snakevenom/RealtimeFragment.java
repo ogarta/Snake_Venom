@@ -1,5 +1,12 @@
 package com.svute.snakevenom;
 
+import android.annotation.SuppressLint;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.ImageFormat;
+import android.graphics.Rect;
+import android.graphics.YuvImage;
+import android.media.Image;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -24,7 +31,15 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.google.common.util.concurrent.ListenableFuture;
+import com.svute.snakevenom.ml.ModelVenom;
 
+import org.tensorflow.lite.DataType;
+import org.tensorflow.lite.support.tensorbuffer.TensorBuffer;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.util.concurrent.ExecutionException;
 
 public class RealtimeFragment extends Fragment {
@@ -33,6 +48,7 @@ public class RealtimeFragment extends Fragment {
     TextView tvResults;
     Spinner spinner;
     int mChoose = 0;
+    int size = 200;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -105,13 +121,96 @@ public class RealtimeFragment extends Fragment {
                     @Override
                     public void analyze(@NonNull ImageProxy image) {
                         String result;
-//                        result = classifier.classify(image);
-//                        tvResults.setText(result);
+                        result = classifyVenom(image);
+                        tvResults.setText(result);
                         image.close();
                     }
                 });
         Camera camera = cameraProvider.bindToLifecycle(this, cameraSelector,
                 preview, imageAnalysis, imageCapture);
+    }
+
+    private String classifyVenom(ImageProxy image) {
+        @SuppressLint("UnsafeOptInUsageError")
+        Image imgage = image.getImage();
+        Bitmap bitmap = toBitmap(imgage);
+        Bitmap img = Bitmap.createScaledBitmap(bitmap, size, size, true);
+        try {
+                ModelVenom model = ModelVenom.newInstance(getContext());
+
+                // Creates inputs for reference.
+                TensorBuffer inputFeature0 = TensorBuffer.createFixedSize(new int[]{1, 200, 200, 3}, DataType.FLOAT32);
+
+                ByteBuffer byteBuffer = ByteBuffer.allocateDirect(4 * size * size * 3);
+                byteBuffer.order(ByteOrder.nativeOrder());
+
+                int[] intValues = new int[size * size];
+                img.getPixels(intValues, 0, img.getWidth(), 0, 0, img.getWidth(), img.getHeight());
+                int pixel = 0;
+                //iterate over each pixel and extract R, G, and B values. Add those values individually to the byte buffer.
+                for(int i = 0; i < size; i ++){
+                    for(int j = 0; j < size; j++){
+                        int val = intValues[pixel++]; // RGB
+                        byteBuffer.putFloat(((val >> 16) & 0xFF) * (1.f / 255));
+                        byteBuffer.putFloat(((val >> 8) & 0xFF) * (1.f / 255));
+                        byteBuffer.putFloat((val & 0xFF) * (1.f / 255));
+                    }
+                }
+
+                inputFeature0.loadBuffer(byteBuffer);
+
+                // Runs model inference and gets result.
+                ModelVenom.Outputs outputs = model.process(inputFeature0);
+                TensorBuffer outputFeature0 = outputs.getOutputFeature0AsTensorBuffer();
+
+                float[] confidences = outputFeature0.getFloatArray();
+                // find the index of the class with the biggest confidence.
+                int maxPos = 0;
+                float maxConfidence = 0;
+                for (int i = 0; i < confidences.length; i++) {
+                    if (confidences[i] > maxConfidence) {
+                        maxConfidence = confidences[i];
+                        maxPos = i;
+                    }
+                }
+                if( Float.compare(confidences[maxPos], 0.7f)< 0){
+                    return "Không phải rắn";
+                }
+                String[] classes = {"KHÔNG ĐỘC", "ĐỘC"};
+
+                // Releases model resources if no longer used.
+                model.close();
+
+                return classes[maxPos];
+            } catch (IOException e) {
+                // TODO Handle the exception
+            }
+
+        return "";
+    }
+
+    private Bitmap toBitmap(Image imgage) {
+        Image.Plane[] planes = imgage.getPlanes();
+        ByteBuffer yBuffer = planes[0].getBuffer();
+        ByteBuffer uBuffer = planes[1].getBuffer();
+        ByteBuffer vBuffer = planes[2].getBuffer();
+
+        int ySize = yBuffer.remaining();
+        int uSize = uBuffer.remaining();
+        int vSize = vBuffer.remaining();
+
+        byte[] nv21 = new byte[ySize + uSize + vSize];
+        //U and V are swapped
+        yBuffer.get(nv21, 0, ySize);
+        vBuffer.get(nv21, ySize, vSize);
+        uBuffer.get(nv21, ySize + vSize, uSize);
+
+        YuvImage yuvImage = new YuvImage(nv21, ImageFormat.NV21, imgage.getWidth(), imgage.getHeight(), null);
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        yuvImage.compressToJpeg(new Rect(0, 0, yuvImage.getWidth(), yuvImage.getHeight()), 100, out);
+
+        byte[] imageBytes = out.toByteArray();
+        return BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
     }
 
 

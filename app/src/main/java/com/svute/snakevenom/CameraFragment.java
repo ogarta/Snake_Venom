@@ -201,7 +201,7 @@ public class CameraFragment extends Fragment {
         Button btnClose = dialog.findViewById(R.id.buttonColoseDialogVenom);
         TextView txtResult = dialog.findViewById(R.id.textViewResultDialogVenom);
 
-        txtResult.setText("Đây là rắn "+xuLyPredic(imgRaw,0));
+        txtResult.setText(xuLyPredic(imgRaw,0));
 
         btnClose.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -321,7 +321,10 @@ public class CameraFragment extends Fragment {
                         maxPos = i;
                     }
                 }
-                String[] classes = {"KHÔNG ĐỘC", "ĐỘC"};
+                if( Float.compare(confidences[maxPos], 0.7f)< 0){
+                    return "Không phải rắn";
+                }
+                String[] classes = {"Đây là rắn KHÔNG ĐỘC", "Đây là rắn ĐỘC"};
 
                 // Releases model resources if no longer used.
                 model.close();
