@@ -28,6 +28,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.svute.snakevenom.ml.ModelClassi;
 import com.svute.snakevenom.ml.ModelVenom;
 
 import org.tensorflow.lite.DataType;
@@ -156,15 +157,22 @@ public class CameraFragment extends Fragment {
         TextView txtResult = dialog.findViewById(R.id.textViewResultDialogClass);
         Button btnInfo = dialog.findViewById(R.id.buttonInfoDialogClass);
 
-        txtResult.setText("Đây là "+ mResultClass);
+        String[] mResult = xuLyPredic(imgRaw,0).split("/");
+
+        txtResult.setText(mResult[0]);
 
         btnInfo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getActivity(), MainActivity.class);
-                intent.putExtra("key",mIndexClass);
-                startActivity(intent);
-                dialog.dismiss();
+                if(mResult[1].equals("null")){
+
+                }else {
+                    Intent intent = new Intent(getActivity(), MainActivity.class);
+                    intent.putExtra("key",mResult[1]);
+                    startActivity(intent);
+                    dialog.dismiss();
+                }
+
             }
         });
 
@@ -281,9 +289,8 @@ public class CameraFragment extends Fragment {
     }
 
     private String xuLyPredic(Bitmap img, int type){
-        img = Bitmap.createScaledBitmap(img, size, size, true);
-
         if (type == 0){
+            img = Bitmap.createScaledBitmap(img, size, size, true);
             try {
                 ModelVenom model = ModelVenom.newInstance(getContext());
 
@@ -331,6 +338,52 @@ public class CameraFragment extends Fragment {
                 model.close();
 
                 return classes[maxPos];
+            } catch (IOException e) {
+                // TODO Handle the exception
+            }
+        }else{
+            img = Bitmap.createScaledBitmap(img, 50, 50, true);
+            try {
+                ModelClassi model = ModelClassi.newInstance(getContext());
+
+                // Creates inputs for reference.
+                TensorBuffer inputFeature0 = TensorBuffer.createFixedSize(new int[]{1, 50, 50, 3}, DataType.FLOAT32);
+                ByteBuffer byteBuffer = ByteBuffer.allocateDirect(4 * 50 * 50 * 3);
+                byteBuffer.order(ByteOrder.nativeOrder());
+
+                int[] intValues = new int[50 * 50];
+                img.getPixels(intValues, 0, img.getWidth(), 0, 0, img.getWidth(), img.getHeight());
+                int pixel = 0;
+                //iterate over each pixel and extract R, G, and B values. Add those values individually to the byte buffer.
+                for(int i = 0; i < 50; i ++){
+                    for(int j = 0; j < 50; j++){
+                        int val = intValues[pixel++]; // RGB
+                        byteBuffer.putFloat(((val >> 16) & 0xFF) * (1.f / 255));
+                        byteBuffer.putFloat(((val >> 8) & 0xFF) * (1.f / 255));
+                        byteBuffer.putFloat((val & 0xFF) * (1.f / 255));
+                    }
+                }
+                inputFeature0.loadBuffer(byteBuffer);
+                // Runs model inference and gets result.
+                ModelClassi.Outputs outputs = model.process(inputFeature0);
+                TensorBuffer outputFeature0 = outputs.getOutputFeature0AsTensorBuffer();
+                float[] confidences = outputFeature0.getFloatArray();
+                // find the index of the class with the biggest confidence.
+                int maxPos = 0;
+                float maxConfidence = 0;
+                for (int i = 0; i < confidences.length; i++) {
+                    if (confidences[i] > maxConfidence) {
+                        maxConfidence = confidences[i];
+                        maxPos = i;
+                    }
+                }
+                if( Float.compare(confidences[maxPos], 0.5f)< 0){
+                    return "Không phải rắn"+"/null";
+                }
+                String[] classes = {"Milk Snake", "Rắn cạp nia","Rắn hổ mang","Rắn cỏ hoa cổ đỏ","Rắn lục cườm","Rắn lục đuôi đỏ","Rắn nước (dendrelaphis)","Rắn nước (xenochrophis)"};
+                // Releases model resources if no longer used.
+                model.close();
+                return classes[maxPos]+"/"+maxPos;
             } catch (IOException e) {
                 // TODO Handle the exception
             }

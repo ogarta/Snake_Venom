@@ -6,7 +6,6 @@
     <string name="btn_dialog_result_model_hi">Loại rắn</string>
     <string name="btn_dialog_result_model">Độc/Không độc</string>
     <string name="label_dialog_show_result">Nhận diện\nrắn độc hay không độc</string>
-    <String name="btn_dialog_result_model">Độc/Không độc</String>
 
     <string-array name="type">
         <item>Nhận diện rắn độc hay không độc</item>
