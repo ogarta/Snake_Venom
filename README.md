@@ -2,6 +2,6 @@
 ## Giảng viên hướng dẫn: PGS. TS. Nguyễn Trường Thịnh
 ## Sinh viên thực hiện: Lê Phan Văn Việt 19146
 ## Lớp: ARIN337629_21_2_05CLC
-Dateset của project được để trên Kaggle
-Dataset của mô hình phân loại rắn độc hay không độc: https://www.kaggle.com/datasets/lephanvanviet/venom-and-nonvenom
-Dataset của mô hình rắn phân loại 8 loại rắn: https://www.kaggle.com/datasets/lephanvanviet/snakes
+Dateset của project được để trên Kaggle </b>
+Dataset của mô hình phân loại rắn độc hay không độc: https://www.kaggle.com/datasets/lephanvanviet/venom-and-nonvenom </b>
+Dataset của mô hình rắn phân loại 8 loại rắn: https://www.kaggle.com/datasets/lephanvanviet/snakes </b>
