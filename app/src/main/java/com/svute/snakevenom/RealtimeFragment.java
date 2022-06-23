@@ -175,7 +175,7 @@ public class RealtimeFragment extends Fragment {
                         maxPos = i;
                     }
                 }
-                if( Float.compare(confidences[maxPos], 0.7f)< 0){
+                if( Float.compare(confidences[maxPos], 0.6f)< 0){
                     return "Không phải rắn";
                 }
                 String[] classes = {"KHÔNG ĐỘC", "ĐỘC"};

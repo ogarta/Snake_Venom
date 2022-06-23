@@ -157,7 +157,7 @@ public class CameraFragment extends Fragment {
         TextView txtResult = dialog.findViewById(R.id.textViewResultDialogClass);
         Button btnInfo = dialog.findViewById(R.id.buttonInfoDialogClass);
 
-        String[] mResult = xuLyPredic(imgRaw,0).split("/");
+        String[] mResult = xuLyPredic(imgRaw,1).split("/");
 
         txtResult.setText(mResult[0]);
 
@@ -231,7 +231,7 @@ public class CameraFragment extends Fragment {
                 final InputStream imageStream = getActivity().getContentResolver().openInputStream(imageUri);
                 final Bitmap selectedImage = BitmapFactory.decodeStream(imageStream);
                 imageView.setImageBitmap(selectedImage);
-                imageView.setRotation(90);
+
             } catch (FileNotFoundException e) {
             }
 
@@ -329,7 +329,7 @@ public class CameraFragment extends Fragment {
                         maxPos = i;
                     }
                 }
-                if( Float.compare(confidences[maxPos], 0.7f)< 0){
+                if( Float.compare(confidences[maxPos], 0.6f)< 0){
                     return "Không phải rắn";
                 }
                 String[] classes = {"Đây là rắn KHÔNG ĐỘC", "Đây là rắn ĐỘC"};
